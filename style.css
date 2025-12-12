@@ -1,6 +1,7 @@
-#container {
-    width: 50%;
+.container {
+    width: 30%;
     border-radius: 2rem;
+    margin: 1rem;
 }
 
 :root,
@@ -65,8 +66,17 @@
     color: #cdd6f4;
 }
 
-input {
+input, select {
     border-style: solid;
+}
+input::-webkit-input-placeholder, input::-moz-placeholder, input:-moz-placeholder, input::placeholder {
+    color: #6c7086;
+    opacity: 1;
+}
+
+select {
+    background-color: var(--bs-secondary-bg) !important;
+    border: 2px var(--bs-tertiary-bg) solid !important;
 }
 
 #Grid div.col {
@@ -79,4 +89,8 @@ input {
 
 .border-primary {
     border-color: #1e1e2e !important;
+}
+
+label {
+    font-weight: bold;
 }

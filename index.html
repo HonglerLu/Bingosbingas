@@ -10,21 +10,67 @@
     <link rel="stylesheet" href="style.css">
     <script type="module" src="script.js"></script>
 </head>
-<body class="bg-primary" style="height: 100%; padding: 2rem;">
-<div class="d-flex justify-content-center align-items-center" style="min-height: 100%;">
-    <div id="container" class="d-flex flex-column bg-body p-md-4">
+<body class="bg-primary" style="height: 100%; padding: 1rem;">
+<div class="d-flex justify-content-center align-items-center flex-row" style="min-height: 100%;">
+    <div id="container" class="d-flex container flex-column bg-body p-md-4 flex-fill">
         <h1 class="text-center"><strong>Bingosbingas</strong></h1>
         <hr>
         <form action="">
-            <label for="1">1</label><input type="text" id="1" class="bg-body-secondary border-2 border-primary rounded form-control"><br>
-            <label for="2">2</label><input type="text" id="2" class="bg-body-secondary border-2 border-primary rounded form-control"><br>
-            <label for="3">3</label><input type="text" id="3" class="bg-body-secondary border-2 border-primary rounded form-control"><br>
-            <label for="4">4</label><input type="text" id="4" class="bg-body-secondary border-2 border-primary rounded form-control"><br>
-            <label for="5">5</label><input type="text" id="5" class="bg-body-secondary border-2 border-primary rounded form-control"><br>
+            
+            <div class="d-flex flex-row justify-content-around gap-2">
+                <div class="flex-fill">
+                    <label for="Nome">Nome do personagem</label>
+                    <input type="text" id="Nome" name="Nome" class="bg-body-secondary border-2 border-primary rounded form-control">
+                </div>
+                <div class="w-25">
+                    <label for="Idade">Idade</label>
+                    <input type="text" id="Idade" name="Idade" class="bg-body-secondary border-2 border-primary rounded form-control">
+                </div>
+            </div>
+            <label for="Local">Local de Origem</label>
+            <input type="text" id="Local" name="Local" class="bg-body-secondary border-2 border-primary rounded form-control"><br>
+            <label for="Relacoes">Relações</label>
+            <select name="Relacoes" id="Relacoes" class="form-select">
+                <option value="Person1">Person1</option>
+                <option value="Person2">Person2</option>
+                <option value="Person3">Person3</option>
+                <option value="Person4">Person4</option>
+            </select><br>
+            <input type="text" id="Relacoes" name="Relacoes" placeholder="Relação com personagem selecionado" class="bg-body-secondary border-2 border-primary rounded form-control"><br>
         </form>
 
         <button id="Button" class="btn-primary btn">Teste</button>
     </div>
+    <div id="list" class="d-flex container flex-column bg-body p-md-4 flex-fill">
+        <h1 class="text-center"><strong>Lista de personagens</strong></h1>
+        <hr>
+        <div id="Grid" class="text-center">
+            <div class="row">
+                <div class="col">1</div>
+                <div class="col">2</div>
+                <div class="col">3</div>
+            </div>
+            <div class="row">
+                <div class="col">1</div>
+                <div class="col">2</div>
+                <div class="col">3</div>
+            </div>
+            <div class="row">
+                <div class="col">1</div>
+                <div class="col">2</div>
+                <div class="col">3</div>
+            </div>
+            <div class="row">
+                <div class="col">1</div>
+                <div class="col">2</div>
+                <div class="col">3</div>
+            </div>
+            <div class="row">
+                <div class="col">1</div>
+                <div class="col">2</div>
+                <div class="col">3</div>
+            </div>
+        </div>
 </div>  
 </body>
 </html>
