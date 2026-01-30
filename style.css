@@ -2,6 +2,7 @@
     width: 30%;
     border-radius: 2rem;
     margin: 1rem;
+    padding: 1.5rem;
 }
 
 :root,
@@ -93,4 +94,13 @@ select {
 
 label {
     font-weight: bold;
+}
+
+@media screen and (max-width: 600px) {
+    .container {
+        width: 100%;
+    }
+    #UpContainer {
+        flex-direction: column !important;
+    }
 }

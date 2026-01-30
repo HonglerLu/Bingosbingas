@@ -11,12 +11,11 @@
     <script type="module" src="script.js"></script>
 </head>
 <body class="bg-primary" style="height: 100%; padding: 1rem;">
-<div class="d-flex justify-content-center align-items-center flex-row" style="min-height: 100%;">
+<div class="d-flex justify-content-center align-items-center flex-row" style="min-height: 100%;" id="UpContainer">
     <div id="container" class="d-flex container flex-column bg-body p-md-4 flex-fill">
         <h1 class="text-center"><strong>Bingosbingas</strong></h1>
         <hr>
-        <form action="">
-            
+        <form action="" id="Form">
             <div class="d-flex flex-row justify-content-around gap-2">
                 <div class="flex-fill">
                     <label for="Nome">Nome do personagem</label>
@@ -24,22 +23,16 @@
                 </div>
                 <div class="w-25">
                     <label for="Idade">Idade</label>
-                    <input type="text" id="Idade" name="Idade" class="bg-body-secondary border-2 border-primary rounded form-control">
+                    <input type="number" id="Idade" name="Idade" class="bg-body-secondary border-2 border-primary rounded form-control">
                 </div>
             </div>
             <label for="Local">Local de Origem</label>
-            <input type="text" id="Local" name="Local" class="bg-body-secondary border-2 border-primary rounded form-control"><br>
-            <label for="Relacoes">Relações</label>
-            <select name="Relacoes" id="Relacoes" class="form-select">
-                <option value="Person1">Person1</option>
-                <option value="Person2">Person2</option>
-                <option value="Person3">Person3</option>
-                <option value="Person4">Person4</option>
-            </select><br>
-            <input type="text" id="Relacoes" name="Relacoes" placeholder="Relação com personagem selecionado" class="bg-body-secondary border-2 border-primary rounded form-control"><br>
+            <input type="text" id="Local" name="Local" class="bg-body-secondary border-2 border-primary rounded form-control">
+            <label for="Desc">Descrição</label>
+            <textarea name="Desc" id="Desc" class="bg-body-secondary border-2 border-primary rounded form-control"></textarea>
         </form>
-
-        <button id="Button" class="btn-primary btn">Teste</button>
+        <br>
+        <button id="Submit" class="btn-primary btn">Teste</button>
     </div>
     <div id="list" class="d-flex container flex-column bg-body p-md-4 flex-fill">
         <h1 class="text-center"><strong>Lista de personagens</strong></h1>
