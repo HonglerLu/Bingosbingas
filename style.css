@@ -78,8 +78,26 @@ input, select {
     border: 2px var(--bs-tertiary-bg) solid;
     border-radius: 0.5rem;
 }
-.Icon:hover {
-    background-color: var(--bs-tertiary-color);
+
+.Controls {
+    opacity: 0;
+    display: flex;
+    border-style: none;
+    background-color: rgba(0, 0, 0, 0.5);
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    max-width: 100%;
+    padding: 0.5rem;
+    transition: opacity 0.2s ease-in-out; 
+}
+.Controls * {
+    text-overflow: ellipsis;
+}
+.Controls:hover {
+    opacity: 1;
 }
 
 .border-primary {
@@ -90,7 +108,7 @@ label {
     font-weight: bold;
 }
 
-@media screen and (max-width: 600px) {
+@media screen and (max-width: 650px) {
     .container {
         width: 100%;
     }

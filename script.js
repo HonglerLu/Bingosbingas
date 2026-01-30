@@ -57,10 +57,12 @@ class EditStrat extends BaseEditStrat{
             this.Target[key] = value
         }
         RenderBlocks()
+        this.Target = null
         EditStrategy = EditModes.Push
         EditStrategy.OnChosen()
     }
     SetTarget(Target){
+        console.log(Target)
         super.SetTarget(Target)
         for (let [key, value] of Object.entries(Target)) {
             console.log(`${key}: ${value}`);
@@ -75,7 +77,10 @@ class EditStrat extends BaseEditStrat{
     }
 }
 
-const GridColumns = 3
+const GridColumns = 2
+const BreakpointColumns = 1
+const Breakpoint = 800
+let CurGridCount = GridColumns
 const Form = document.getElementById("Form")
 const ButtonGroup = document.getElementById("ButtonGroup")
 const CancelButton = document.getElementById("Cancel")
@@ -95,25 +100,63 @@ function OnIconClick(Data){
         EditStrategy.SetTarget(Data)
 }
 
+function EraseBlock(Data) {
+    let Index = DataBlocks.indexOf(Data)
+    DataBlocks.splice(Index, 1)
+    RenderBlocks()
+
+    if (EditStrategy != EditModes.Edit)
+        return
+    if (EditStrategy.GetTarget() == Data){
+        EditStrategy = EditModes.Push
+        EditStrategy.OnChosen()
+    }
+}
+
 function RenderBlocks() {
     let Container = null
     let NewNodes = []
     Grid.replaceChildren()
     for (let i = 0; i < DataBlocks.length; i++){
         let Data = DataBlocks[i]
-        if (i % GridColumns == 0){
+        if (i % CurGridCount == 0){
             Container = document.createElement("div")
             Container.classList.add("row")
             Grid.appendChild(Container)
             NewNodes.push(Container)
         }
-        var Icon = document.createElement("button")
+        let Icon = document.createElement("button")
         Icon.classList.add("col")
         Icon.classList.add("Icon")
-        Icon.addEventListener('click', () => {
+        Icon.style.position = "relative"
+        
+        for (let [key, value] of Object.entries(Data)) {
+            if (!value)
+                continue
+            let text = document.createElement("div")
+            text.innerHTML = `<b>${key}</b>: ${value}`
+            Icon.appendChild(text)
+        }
+
+        let Cont = document.createElement("div")
+        Cont.classList.add("flex-row", "gap-2", "Controls")
+
+        Icon.appendChild(Cont)
+        let Erase = document.createElement("button")
+        Erase.classList.add("btn", "btn-danger", "flex-fill")
+        Erase.innerText = "Deletar"
+        Erase.onclick = () => {
+            EraseBlock(Data)
+        }
+        Cont.appendChild(Erase)
+        let Edit = document.createElement("button")
+        Edit.classList.add("btn", "btn-primary", "flex-fill")
+        Edit.innerText = "Editar"
+        Cont.appendChild(Edit)
+        Edit.onclick = () => {
             OnIconClick(Data)
-        })
-        Icon.innerText = `${Data.Nome}${Data.Idade ? ` [${Data.Idade}]` : ""}`
+        }
+
         Container.appendChild(Icon)
     }
 }
@@ -130,4 +173,14 @@ CancelButton.addEventListener('click', () => {
     EditStrategy.OnChosen()
 })
 
+function HandleResize() {
+    const newWindowWidth = window.innerWidth;
+    if (newWindowWidth <= Breakpoint)
+        CurGridCount = BreakpointColumns
+    else
+        CurGridCount = GridColumns
+    RenderBlocks()
+}
+window.addEventListener('resize', HandleResize)
+HandleResize()
 RenderBlocks()
