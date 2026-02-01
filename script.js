@@ -27,9 +27,6 @@ class PushStrat extends BaseEditStrat{
             alert("O Nome não pode estar em branco!")
             return
         }
-        var Idade = formObject.Idade
-        var Origem = formObject.Local
-        var Desc = formObject.Desc
         
         PushNewBlock(formObject)
         RenderBlocks()
@@ -89,6 +86,9 @@ const ButtonGroup = document.getElementById("ButtonGroup")
 const CancelButton = document.getElementById("Cancel")
 const Grid = document.getElementById("Grid")
 const EditModes = { Push: new PushStrat(), Edit: new EditStrat() }
+const ImportButton = document.getElementById("Importar")
+const ExportButton = document.getElementById("Exportar")
+const FileSelector = document.getElementById("FileInput")
 let EditStrategy = EditModes.Push
 let DataBlocks = []
 
@@ -164,17 +164,53 @@ function RenderBlocks() {
     }
 }
 
+function ExportCSV(){
+    let Values = []
+    let Datas = []
+
+     for (let [_, data] of Object.entries(DataBlocks)) {
+        Datas.push(data)
+        for (let [key, _] of Object.entries(data)) {
+            if (Values.includes(key))
+                continue
+            Values.push(key)
+        }
+    }
+    console.log(Values)
+    let Lines = []
+    Lines.push(Values.join(","))
+    for (let dat of Datas){
+        console.log(dat)
+        var Formatted = []
+        for (let key of Values){
+            Formatted.push(key in dat ? dat[key] : "")
+        }
+        Lines.push(Formatted.join(","))
+    }
+    let Separated = Lines.join("\n")
+    console.log(Separated)
+
+    const blob = new Blob([Separated], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = "Exported";
+
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+    URL.revokeObjectURL(url);
+}
+
+function ImportCSV(Data){
+
+}
+
 function PushNewBlock(Data) {
     DataBlocks.push(Data)
 }
-
-document.getElementById("Submit").addEventListener('click', function(){
-    EditStrategy.PushData()
-})
-CancelButton.addEventListener('click', () => {
-    EditStrategy = EditModes.Push
-    EditStrategy.OnChosen()
-})
 
 function HandleResize() {
     const newWindowWidth = window.innerWidth;
@@ -190,3 +226,29 @@ function HandleResize() {
 window.addEventListener('resize', HandleResize)
 HandleResize()
 RenderBlocks()
+
+document.getElementById("Submit").addEventListener('click', function(){
+    EditStrategy.PushData()
+})
+CancelButton.addEventListener('click', () => {
+    EditStrategy = EditModes.Push
+    EditStrategy.OnChosen()
+})
+ImportButton.addEventListener('click', () => {
+    FileSelector.click()
+})
+FileSelector.addEventListener('change', (Ev) => {
+    const files = Ev.target.files
+    if (files.length == 0)
+        return
+    const File = files[0]
+    const reader = new FileReader();
+    console.log(File)
+    reader.onload = function(e) {
+        const contents = e.target.result;
+        ImportCSV(contents)
+    };
+
+    reader.readAsText(File)
+})
+ExportButton.addEventListener('click', ExportCSV)
