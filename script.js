@@ -196,7 +196,7 @@ function ExportCSV(){
     let Separated = Lines.join("\n")
 
     // Criar um novo Blob para exportar o CSV
-    const blob = new Blob([Separated], { type: 'text/csvcharset=utf-8' })
+    const blob = new Blob([Separated], { type: 'text/csv;charset=utf-8' })
     const url = URL.createObjectURL(blob)
 
     // Cria um elemento <a> temporario para servir como download
