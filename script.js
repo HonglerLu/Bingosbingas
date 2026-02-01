@@ -19,7 +19,7 @@ class PushStrat extends BaseEditStrat{
     }
     PushData(){
         var Data = new FormData(Form)
-        var formObject = Object.fromEntries(Data.entries());
+        var formObject = Object.fromEntries(Data.entries())
         
         Form.reset()
         var Nome = formObject.Nome.trim()
@@ -43,10 +43,10 @@ class EditStrat extends BaseEditStrat{
     }
     PushData(){
         var Data = new FormData(Form)
-        var formObject = Object.fromEntries(Data.entries());
+        var formObject = Object.fromEntries(Data.entries())
         for (const prop in this.Target) {
             if (Object.hasOwnProperty.call(this.Target, prop)) {
-                delete this.Target[prop];
+                delete this.Target[prop]
             }
         }
 
@@ -62,7 +62,7 @@ class EditStrat extends BaseEditStrat{
         console.log(Target)
         super.SetTarget(Target)
         for (let [key, value] of Object.entries(Target)) {
-            console.log(`${key}: ${value}`);
+            console.log(`${key}: ${value}`)
             if (!Form.elements[key])
                 continue
             Form.elements[key].value = value
@@ -107,7 +107,7 @@ function EraseBlock(Data) {
     let Index = DataBlocks.indexOf(Data)
     DataBlocks.splice(Index, 1)
     RenderBlocks()
-
+    UpdateButtons()
     if (EditStrategy != EditModes.Edit)
         return
     if (EditStrategy.GetTarget() == Data){
@@ -145,13 +145,6 @@ function RenderBlocks() {
         Cont.classList.add("flex-row", "gap-2", "Controls")
 
         Icon.appendChild(Cont)
-        let Erase = document.createElement("button")
-        Erase.classList.add("btn", "btn-danger", "flex-fill")
-        Erase.innerText = "Deletar"
-        Erase.onclick = () => {
-            EraseBlock(Data)
-        }
-        Cont.appendChild(Erase)
         let Edit = document.createElement("button")
         Edit.classList.add("btn", "btn-primary", "flex-fill")
         Edit.innerText = "Editar"
@@ -159,6 +152,13 @@ function RenderBlocks() {
         Edit.onclick = () => {
             OnIconClick(Data)
         }
+        let Erase = document.createElement("button")
+        Erase.classList.add("btn", "btn-danger", "flex-fill")
+        Erase.innerText = "Deletar"
+        Erase.onclick = () => {
+            EraseBlock(Data)
+        }
+        Cont.appendChild(Erase)
 
         Container.appendChild(Icon)
     }
@@ -176,7 +176,6 @@ function ExportCSV(){
             Values.push(key)
         }
     }
-    console.log(Values)
     let Lines = []
     Lines.push(Values.join(","))
     for (let dat of Datas){
@@ -188,32 +187,57 @@ function ExportCSV(){
         Lines.push(Formatted.join(","))
     }
     let Separated = Lines.join("\n")
-    console.log(Separated)
 
-    const blob = new Blob([Separated], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
+    const blob = new Blob([Separated], { type: 'text/csvcharset=utf-8' })
+    const url = URL.createObjectURL(blob)
 
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = "Exported";
+    const link = document.createElement('a')
+    link.href = url
+    link.download = "Exported"
 
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
 
-    URL.revokeObjectURL(url);
+    URL.revokeObjectURL(url)
 }
 
 function ImportCSV(Data){
+    const Lines = Data.split(/\r?\n/)
+    var Values = Lines[0].split(",")
+    let Builts = []
 
+    for (let i = 1; i < Lines.length; i++){
+        let Line = Lines[i]
+        let Val = Line.split(",")
+        let Build = {}
+        for (let s of Values){
+            let ind = Values.indexOf(s)
+            Build[s] = Val[ind]
+        }
+        Builts.push(Build)
+    }
+    for (let d of Builts){
+        DataBlocks.push(d)
+    }
+    RenderBlocks()
+    UpdateButtons()
+}
+
+function UpdateButtons(){
+    if (DataBlocks.length > 0)
+        ExportButton.disabled = false
+    else
+        ExportButton.disabled = true
 }
 
 function PushNewBlock(Data) {
     DataBlocks.push(Data)
+    UpdateButtons()
 }
 
 function HandleResize() {
-    const newWindowWidth = window.innerWidth;
+    const newWindowWidth = window.innerWidth
     let ChosenSize = null
     for (let [key, value] of Object.entries(GridBreaks)) {
         if (key <= newWindowWidth){
@@ -226,6 +250,7 @@ function HandleResize() {
 window.addEventListener('resize', HandleResize)
 HandleResize()
 RenderBlocks()
+UpdateButtons()
 
 document.getElementById("Submit").addEventListener('click', function(){
     EditStrategy.PushData()
@@ -242,12 +267,12 @@ FileSelector.addEventListener('change', (Ev) => {
     if (files.length == 0)
         return
     const File = files[0]
-    const reader = new FileReader();
+    const reader = new FileReader()
     console.log(File)
     reader.onload = function(e) {
-        const contents = e.target.result;
+        const contents = e.target.result
         ImportCSV(contents)
-    };
+    }
 
     reader.readAsText(File)
 })
