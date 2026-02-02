@@ -14,9 +14,6 @@ class BaseEditStrat {
     OnChosen(){}
 }
 class PushStrat extends BaseEditStrat{
-    constructor(){
-        super()
-    }
     PushData(){
         var Data = new FormData(Form)
         var formObject = Object.fromEntries(Data.entries())
@@ -38,9 +35,6 @@ class PushStrat extends BaseEditStrat{
     }
 }
 class EditStrat extends BaseEditStrat{
-    constructor(){
-        super()
-    }
     PushData(){
         var Data = new FormData(Form)
         var formObject = Object.fromEntries(Data.entries())
@@ -142,7 +136,7 @@ function RenderBlocks() {
             if (!value)
                 continue
             let text = document.createElement("div")
-            text.innerHTML = `<b>${key}</b>: ${value}`
+            text.innerHTML = `<b>${key}</b>: ${value.replaceAll("\n", "<br>")}`
             Icon.appendChild(text)
         }
 
@@ -169,8 +163,43 @@ function RenderBlocks() {
     }
 }
 
-function SplitCSVLine(Text){
-    return Text.split(",")
+function GetQuoteStreak(At){
+    let Streak = 0
+    for (let Char of At){
+        if (Char != '"')
+            break
+        Streak += 1
+    }
+    return Streak
+}
+
+function SplitCSV(Text){
+    let CurrentString = ""
+    let InsideQuote = false
+    let Blocks = []
+    for (let i = 0; i < Text.length; i++){
+        let Char = Text[i]
+        if (Char == "," && InsideQuote == false){
+            Blocks.push(CurrentString)
+            CurrentString = ""
+            continue
+        }
+        if (Char == '"'){
+            let Streak = GetQuoteStreak(Text.slice(i))
+            if (Streak % 2 == 0 && InsideQuote){
+                console.log("String literal!")
+                Text = Text.slice(0, i) + '"' + Text.slice(i + 2)
+                console.log(Text)
+            } else {
+                InsideQuote = !InsideQuote
+                continue
+            }
+        }
+        CurrentString += Char
+    }
+    Blocks.push(CurrentString)
+    console.log(Blocks)
+    return [Blocks, InsideQuote]
 }
 
 function ExportCSV(){
@@ -194,11 +223,9 @@ function ExportCSV(){
         var Formatted = []
         for (let key of Values){
             let Val = dat[key]
-            let HasComma = Val.includes(',')
-            let Special = Val.includes('"')
+            let Special = Val.includes('"') || Val.includes(',') || Val.includes('\n')
+            Val = `${Val.replaceAll('"', '""')}`
             if (Special)
-                Val = `${Val.replaceAll('"', '""')}`
-            if (HasComma || Special)
                 Val = `"${Val}"`
             console.log(Special)
             Formatted.push(Val ? Val : "")
@@ -216,7 +243,7 @@ function ExportCSV(){
     link.download = "Exported"
 
     document.body.appendChild(link)
-    //link.click()
+    link.click()
     document.body.removeChild(link)
 
     // Remove URL para economizar memoria e previnir memory leak (não é muito importante num site pequeno assim mas é bom)
@@ -224,27 +251,41 @@ function ExportCSV(){
 }
 
 function ImportCSV(Data){
-    const Lines = Data.split(/\r?\n/)
-    var Values = Lines[0].split(",") // Inicializa indices basicos
-    let Builts = []
-    console.log(Lines)
-    for (let i = 1; i < Lines.length; i++){
+    const Lines = Data.split(/\r?\n/) // Divide por linha
+    let Formatted = []
+    let Completes = []
+    for (let i = 0; i < Lines.length; i++){
         let Line = Lines[i]
-        let Val = SplitCSVLine(Line)
-        let Build = {}
-
-        // Colocar cada valor no indice correto
-        for (let s of Values){
-            // Valida se o formulário tem o valor necessario
-            if (!(s in Form.elements))
-                continue
-            let ind = Values.indexOf(s)
-            Build[s] = Val[ind]
+        let CurrLine = Line
+        let SplitResult = SplitCSV(CurrLine) // Recorta o CSV seguindo as normas rfc4180
+        let Split = SplitResult[0]
+        let Incomplete = SplitResult[1] // Detecta se o corte foi incompleto por qualquer tipo de malformação
+        while (Incomplete && Line != null){
+            i++
+            Line = Lines[i]
+            if (Line){
+                CurrLine += "\n"+Line // Aplica a nova linha
+                SplitResult = SplitCSV(CurrLine) // Recorta de novo
+                Split = SplitResult[0]
+                Incomplete = SplitResult[1]
+            }
         }
-        Builts.push(Build)
+        if (Incomplete){
+            console.error(`Os dados para o CSV importado ficou incompleto!`)
+            continue
+        }
+        Formatted.push(Split) // Insere o novo recorte
     }
-    for (let d of Builts){
-        DataBlocks.push(d)
+    let Header = Formatted.shift()
+    for (let Build of Formatted){
+        let Data = {}
+        for (let Key = 0; Key < Header.length; Key++){
+            Data[Header[Key]] = Build[Key] // Insere os valores na chave baseada no Header/Cabeçalho
+        }
+        Completes.push(Data)
+    }
+    for (let d of Completes){
+        DataBlocks.push(d) // Insere nos blocos globais
     }
     RenderBlocks()
     UpdateButtons()
