@@ -169,10 +169,14 @@ function RenderBlocks() {
     }
 }
 
+function SplitCSVLine(Text){
+    return Text.split(",")
+}
+
 function ExportCSV(){
     let Values = []
     let Datas = []
-
+    console.clear()
     // Inicializar valores basicos usados para modularidade
     for (let [_, data] of Object.entries(DataBlocks)) {
         Datas.push(data)
@@ -189,23 +193,30 @@ function ExportCSV(){
     for (let dat of Datas){
         var Formatted = []
         for (let key of Values){
-            Formatted.push(key in dat ? dat[key] : "")
+            let Val = dat[key]
+            let HasComma = Val.includes(',')
+            let Special = Val.includes('"')
+            if (Special)
+                Val = `${Val.replaceAll('"', '""')}`
+            if (HasComma || Special)
+                Val = `"${Val}"`
+            console.log(Special)
+            Formatted.push(Val ? Val : "")
         }
         Lines.push(Formatted.join(","))
     }
     let Separated = Lines.join("\n")
-
+    console.log(Separated)
     // Criar um novo Blob para exportar o CSV
     const blob = new Blob([Separated], { type: 'text/csv;charset=utf-8' })
     const url = URL.createObjectURL(blob)
-
     // Cria um elemento <a> temporario para servir como download
     const link = document.createElement('a')
     link.href = url
     link.download = "Exported"
 
     document.body.appendChild(link)
-    link.click()
+    //link.click()
     document.body.removeChild(link)
 
     // Remove URL para economizar memoria e previnir memory leak (não é muito importante num site pequeno assim mas é bom)
@@ -216,10 +227,10 @@ function ImportCSV(Data){
     const Lines = Data.split(/\r?\n/)
     var Values = Lines[0].split(",") // Inicializa indices basicos
     let Builts = []
-
+    console.log(Lines)
     for (let i = 1; i < Lines.length; i++){
         let Line = Lines[i]
-        let Val = Line.split(",")
+        let Val = SplitCSVLine(Line)
         let Build = {}
 
         // Colocar cada valor no indice correto
