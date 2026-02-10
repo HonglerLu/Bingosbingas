@@ -113,9 +113,9 @@ label {
     font-weight: bold;
 }
 
-@media screen and (max-width: 650px) {
+@media screen and (max-aspect-ratio: 8/5) {
     .container {
-        width: 100%;
+        min-width: 100%;
     }
     #UpContainer {
         flex-direction: column !important;
