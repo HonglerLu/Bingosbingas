@@ -325,6 +325,7 @@ document.getElementById("Submit").addEventListener('click', function(){
 CancelButton.addEventListener('click', () => {
     EditStrategy = EditModes.Push
     EditStrategy.OnChosen()
+    EditModes.Edit.SetTarget(null)
 })
 ImportButton.addEventListener('click', () => {
     FileSelector.click()
